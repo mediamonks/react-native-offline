@@ -13,8 +13,6 @@ export default function checkInternetAccess(
 
   return new Promise((resolve: (value: boolean) => void) => {
 
-	loopConnectionCheck(resolve, 20000);
-
     setTimeout(() => {
       fetch(address, { method: 'HEAD' })
         .then(() => {
