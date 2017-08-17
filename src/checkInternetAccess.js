@@ -3,7 +3,7 @@
 export default function checkInternetAccess(
   isConnected: boolean,
   timeout: number = 4000,
-  address: string = 'https://google.com',
+  address: string = 'https://www.aeromexico.com',
 ): Promise<boolean> {
   if (!isConnected) {
     return Promise.resolve(false);
@@ -12,21 +12,31 @@ export default function checkInternetAccess(
   const delayWhenChecking = 2000;
 
   return new Promise((resolve: (value: boolean) => void) => {
-    const tm = setTimeout(() => {
-      resolve(false);
-    }, timeout + delayWhenChecking);
+
+	loopConnectionCheck(resolve, 20000);
 
     setTimeout(() => {
       fetch(address, { method: 'HEAD' })
         .then(() => {
-          clearTimeout(tm);
           resolve(true);
         })
         .catch(() => {
-          clearTimeout(tm);
-          resolve(false);
+	        loopConnectionCheck(resolve, 20000);
         });
-
     }, delayWhenChecking);
   });
+}
+
+function loopConnectionCheck(callback, delay)
+{
+	setTimeout(() => {
+		fetch(address, { method: 'HEAD' })
+			.then(() => {
+				callback(true);
+			})
+			.catch(() => {
+
+				loopCheck(callback, delay);
+			});
+    }, delay)
 }
