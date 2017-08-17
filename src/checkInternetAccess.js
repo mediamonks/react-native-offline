@@ -5,6 +5,8 @@ export default function checkInternetAccess(
   timeout: number = 4000,
   address: string = 'https://www.aeromexico.com'
 ): Promise<boolean> {
+
+
   const initialDelayWhenChecking = 2000;
   const delayWhenChecking = 10000;
 

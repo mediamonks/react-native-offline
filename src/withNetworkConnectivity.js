@@ -5,7 +5,7 @@ import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
-import checkInternetAccess from './checkInternetAccess';
+import checkInternetAccessInfinity from './checkInternetAccessInfinity';
 
 type Arguments = {
   withRedux?: boolean,
@@ -18,11 +18,7 @@ type State = {
 };
 
 const withNetworkConnectivity = (
-  {
-    withRedux = false,
-    timeout = 3000,
-    pingServerUrl = 'https://google.com',
-  }: Arguments = {},
+  { withRedux = false, timeout = 3000, pingServerUrl = 'https://google.com' }: Arguments = {}
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
@@ -51,9 +47,7 @@ const withNetworkConnectivity = (
       NetInfo.isConnected.addEventListener('change', this.checkInternet);
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
-        NetInfo.isConnected
-          .fetch()
-          .then((isConnected: boolean) => this.checkInternet(isConnected));
+        NetInfo.isConnected.fetch().then((isConnected: boolean) => this.checkInternet(isConnected));
       }
     }
 
@@ -62,24 +56,21 @@ const withNetworkConnectivity = (
     }
 
     checkInternet = (isConnected: boolean) => {
-      checkInternetAccess(
+      checkInternetAccessInfinity(
+        hasInternetAccess => {
+          this.handleConnectivityChange(hasInternetAccess);
+        },
         isConnected,
         timeout,
-        pingServerUrl,
-      ).then((hasInternetAccess: boolean) => {
-        this.handleConnectivityChange(hasInternetAccess);
-      });
+        pingServerUrl
+      );
     };
 
     handleConnectivityChange = (isConnected: boolean) => {
       const { store } = this.context;
       reactConnectionStore.setConnection(isConnected);
       // Top most component, syncing with store
-      if (
-        typeof store === 'object' &&
-        typeof store.dispatch === 'function' &&
-        withRedux === true
-      ) {
+      if (typeof store === 'object' && typeof store.dispatch === 'function' && withRedux === true) {
         const actionQueue = store.getState().network.actionQueue;
         store.dispatch(connectionChange(isConnected));
         // dispatching queued actions in order of arrival (if we have any)

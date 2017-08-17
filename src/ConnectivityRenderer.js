@@ -2,7 +2,7 @@
 
 import { Component, PropTypes } from 'react';
 import { NetInfo, Platform } from 'react-native';
-import checkInternetAccess from './checkInternetAccess';
+import checkInternetAccessInfinity from './checkInternetAccessInfinity';
 import reactConnectionStore from './reactConnectionStore';
 
 type DefaultProps = {
@@ -50,9 +50,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     NetInfo.isConnected.addEventListener('change', this.checkInternet);
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
-      NetInfo.isConnected
-        .fetch()
-        .then((isConnected: boolean) => this.checkInternet(isConnected));
+      NetInfo.isConnected.fetch().then((isConnected: boolean) => this.checkInternet(isConnected));
     }
   }
 
@@ -61,13 +59,14 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   }
 
   checkInternet = (isConnected: boolean) => {
-    checkInternetAccess(
+    checkInternetAccessInfinity(
+      hasInternetAccess => {
+        this.handleConnectivityChange(hasInternetAccess);
+      },
       isConnected,
       this.props.timeout,
-      this.props.pingServerUrl,
-    ).then((hasInternetAccess: boolean) => {
-      this.handleConnectivityChange(hasInternetAccess);
-    });
+      this.props.pingServerUrl
+    );
   };
 
   handleConnectivityChange = (isConnected: boolean) => {
