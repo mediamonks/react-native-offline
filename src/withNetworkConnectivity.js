@@ -1,8 +1,9 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
+import PropTypes from 'prop-types';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccessInfinity from './checkInternetAccessInfinity';
