@@ -1,8 +1,9 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
+import PropTypes from 'prop-types';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccessInfinity from './checkInternetAccessInfinity';
@@ -17,9 +18,11 @@ type State = {
   isConnected: boolean,
 };
 
-const withNetworkConnectivity = (
-  { withRedux = false, timeout = 3000, pingServerUrl = 'https://google.com' }: Arguments = {}
-) => (WrappedComponent: ReactClass<*>) => {
+const withNetworkConnectivity = ({
+  withRedux = false,
+  timeout = 3000,
+  pingServerUrl = 'https://google.com',
+}: Arguments = {}) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
   }
@@ -44,7 +47,7 @@ const withNetworkConnectivity = (
     };
 
     componentDidMount() {
-      NetInfo.isConnected.addEventListener('change', this.checkInternet);
+      NetInfo.isConnected.addEventListener('connectionChange', this.checkInternet);
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
         NetInfo.isConnected.fetch().then((isConnected: boolean) => this.checkInternet(isConnected));
@@ -52,7 +55,7 @@ const withNetworkConnectivity = (
     }
 
     componentWillUnmount() {
-      NetInfo.isConnected.removeEventListener('change', this.checkInternet);
+      NetInfo.isConnected.removeEventListener('connectionChange', this.checkInternet);
     }
 
     checkInternet = (isConnected: boolean) => {

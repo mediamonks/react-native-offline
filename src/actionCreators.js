@@ -15,9 +15,7 @@ export const connectionChange = (isConnected: boolean): FluxAction => ({
   payload: isConnected,
 });
 
-export const fetchOfflineMode = (
-  action: EnqueuedAction,
-): FluxActionWithPreviousIntent => {
+export const fetchOfflineMode = (action: EnqueuedAction): FluxActionWithPreviousIntent => {
   if (typeof action === 'object') {
     return {
       type: actionTypes.FETCH_OFFLINE_MODE,
@@ -40,16 +38,12 @@ export const fetchOfflineMode = (
   };
 };
 
-export const removeActionFromQueue = (
-  action: EnqueuedAction,
-): FluxActionForRemoval => ({
+export const removeActionFromQueue = (action: EnqueuedAction): FluxActionForRemoval => ({
   type: actionTypes.REMOVE_FROM_ACTION_QUEUE,
   payload: action,
 });
 
-export const dismissActionsFromQueue = (
-  actionTrigger: string,
-): FluxActionForDismissal => ({
+export const dismissActionsFromQueue = (actionTrigger: string): FluxActionForDismissal => ({
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
 });
